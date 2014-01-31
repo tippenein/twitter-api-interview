@@ -1,0 +1,28 @@
+{
+  "name": "twitter-api-interview",
+  "version": "0.0.0",
+  "description": "coding project for sport-ngin interview",
+  "main": "app.js",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tippenein/twitter-api-interview"
+  },
+  "author": "tippenein",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/tippenein/twitter-api-interview/issues"
+  },
+  "dependencies": {
+    "passport-twitter": "~1.0.2",
+    "jade": "~1.1.5",
+    "express": "~3.4.8",
+    "passport": "~0.2.0"
+  }
+}

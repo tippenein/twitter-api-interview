@@ -1,0 +1,18 @@
+extends base
+
+block body
+
+  title= title
+  h1 Hi
+  form(name="input", action="/search", method="get")
+    input(type="text", name="q")
+    input.btn.btn-primary(type="submit", value="Submit")
+
+  ul.tweets
+    if tweets
+      for tweet in tweets
+        li tweet
+    else
+      p search for tweets
+
+  a(href='/logout') Logout

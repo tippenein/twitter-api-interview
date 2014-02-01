@@ -3,6 +3,7 @@ extends base
 block content
   title= title
   h1= title
+
   a(href='/logout').btn.btn-primary.pull-right Logout
   form(name="input", action="/search", method="get")
     input(type="text", name="q")
@@ -11,6 +12,8 @@ block content
   hr
 
   ul.tweets
+    if screen_name
+      a(href="/tweetmap/"+screen_name) Map #{screen_name}'s tweets
     if tweets
       for tweet in tweets
         li.tweet

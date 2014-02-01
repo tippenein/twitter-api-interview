@@ -1,5 +1,8 @@
 // app.js
 
+// Since this file is still under 200 LOC it's not worth splitting into
+// separate routes files, imo
+
 var express   = require('express'),
     request   = require('request'),
     OAuth     = require('oauth').OAuth,
@@ -21,7 +24,6 @@ app.configure(function() {
 });
 
 var callbackURL = config.site + "/auth/twitter/callback";
-console.log("callbackURL: " + callbackURL)
 var oauth = new OAuth(
     'https://api.twitter.com/oauth/request_token',
     'https://api.twitter.com/oauth/access_token',
@@ -58,22 +60,23 @@ app.get('/login', function(req, res) {
 // -- callback --
 app.get('/auth/twitter/callback', function(req, res) {
   if (!_.isUndefined(req.session.oauth)) {
-    req.session.oauth.verifier = req.query.oauth_verifier;
     var oa = req.session.oauth;
+    oa.verifier = req.query.oauth_verifier;
     oauth.getOAuthAccessToken(oa.token, oa.token_secret, oa.verifier, function(err, tok, secret, data) {
       if (err) {
         console.log("err: " + err);
       } else {
-        req.session.oauth.screen_name = data.screen_name;
-        req.session.oauth.access_token = tok;
-        req.session.oauth.access_token_secret = secret;
+        oa.screen_name = data.screen_name;
+        oa.access_token = tok;
+        oa.access_token_secret = secret;
         res.redirect('/');
       }
     });
   } else {
-      res.redirect('/');
+    // not authenticated
+    res.redirect('/');
   }
-})
+});
 
 // -- search --
 app.get('/search', function(req, res) {
@@ -86,7 +89,6 @@ app.get('/search', function(req, res) {
           oauth: makeOAuth(req),
           json: true
       }, function(err, response, body) {
-        console.log(body)
         if (err) {console.log("meh:" + err); }
         else {
           res.render('index', { title:'Searched \"' + q + "\"",
@@ -100,48 +102,77 @@ app.get('/search', function(req, res) {
   }
 });
 
+// -- timeline --
 app.get('/timeline/:user', function(req, res) {
+  if (!_.isUndefined(req.session.oauth)) {
+    var user = req.params.user;
+    var urlCall = config.timelineResource + user;
+    request.get({
+      url: urlCall,
+      oauth: makeOAuth(req),
+      json: true
+    }, function(err, response, body) {
+      if (err) {console.log(err);}
+      else {
+        res.render('index', {title: 'timeline for \"' + user + '\"',
+                            tweets: body,
+                            screen_name: user});
+      }
+    });
+  } else {
+    res.redirect('/');
+  }
+
+});
+
+// -- tweetmap --
+app.get('/tweetmap/:user', function(req,res) {
   var user = req.params.user;
-  var urlCall = config.timelineResource + user;
+  var apiEndpoint = config.timelineResource + user;
   request.get({
-    url: urlCall,
+    url: apiEndpoint,
     oauth: makeOAuth(req),
     json: true
   }, function(err, response, body) {
-    if (err) {console.log(err)}
+    if (err) {console.log(err);}
     else {
-      res.render('index', {title: 'timeline for \"' + user + '\"',
-                           tweets: body,
-                           screen_name: user});
+      var tweets = body;
+      var coords = [];
+      var msgs   = [];
+      _.each(tweets, function(tweet) {
+        if (tweet.place) {
+          coords.push(tweet.place.bounding_box.coordinates[0][0]);
+          msgs.push(tweet.text);
+        }
+      });
+      var locations = {coordinates: coords, messages: msgs};
+      res.render('tweetmap', {
+        title: 'tweetmap for ' + user,
+        tweets: tweets,
+        screen_name: user,
+        key: config.mapApiKey,
+        locations: JSON.stringify(locations)
+      });
     }
   });
 });
-
-function makeOAuth(req) {
-  var oauth = {
-    consumer_key: config.consumer_key,
-    consumer_secret: config.consumer_secret,
-    token: req.session.oauth.access_token,
-    token_secret: req.session.oauth.access_token_secret
-  }
-  return oauth;
-}
-
 
 app.get('/logout', function(req, res) {
   req.session.oauth = undefined;
   res.redirect('/');
 });
 
-app.get('/tweetmap/:user', function(req,res) {
-  var user = req.params.user;
-})
-
-//passport specific routes
-//app.get('/auth/twitter', passport.authenticate('twitter'));
-//app.get('/auth/twitter/callback',
-//   passport.authenticate('twitter', { successRedirect: '/',
-//                                      failureRedirect: '/auth/twitter' }));
+function makeOAuth(req) {
+  //utility function for making oauth hash
+  var oauth = {
+    consumer_key: config.consumer_key,
+    consumer_secret: config.consumer_secret,
+    token: req.session.oauth.access_token,
+    token_secret: req.session.oauth.access_token_secret
+  };
+  return oauth;
+}
 
 app.listen(process.env.PORT || 3000);
+console.log('listening on ' + config.site);
 

@@ -17,3 +17,4 @@ exports.searchResource = 'https://api.twitter.com/1.1/search/tweets.json';
 // https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 exports.timelineResource = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=';
 exports.tokenResource = 'https://twitter.com/oauth/authenticate?oauth_token=';
+exports.mapApiKey = 'AIzaSyBBrytUA4Qtf8Rrudxrdx5RpYmfd9-gZ8E';

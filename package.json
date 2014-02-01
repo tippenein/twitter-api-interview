@@ -24,6 +24,8 @@
     "jade": "~1.1.5",
     "express": "~3.4.8",
     "passport": "~0.2.0",
-    "request": "~2.33.0"
+    "request": "~2.33.0",
+    "oauth": "~0.9.11",
+    "underscore": "~1.5.2"
   }
 }

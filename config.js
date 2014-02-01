@@ -7,6 +7,7 @@ switch(process.env.NODE_ENV) {
     exports.site = "http://fierce-everglades-3598.herokuapp.com";
     break;
 }
+exports.title = "Tweet App Thingy!"
 exports.consumer_key = 'cKL8vtoAWxFKxEi5gaAN2A';
 exports.consumer_secret = 'A5WN7bzAexqCsJeUcRKOW598nocy30fyvYqpe8yuU';
 // https://dev.twitter.com/docs/api/1.1/get/search/tweets

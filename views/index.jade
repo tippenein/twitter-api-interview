@@ -1,18 +1,27 @@
 extends base
 
 block body
-
   title= title
-  h1 Hi
-  form(name="input", action="/search", method="get")
-    input(type="text", name="q")
-    input.btn.btn-primary(type="submit", value="Submit")
+  h1= title
+  if user
+    p Hi #{user.displayName}
+    a(href='/logout').btn.btn-primary.pull-right Logout
+    form(name="input", action="/search", method="get")
+      input(type="text", name="q")
+      input.btn(type="submit", value="Submit")
 
-  ul.tweets
-    if tweets
-      for tweet in tweets
-        li tweet
-    else
-      p search for tweets
+    ul.tweets
+      if tweets
+        for tweet in tweets
+          li
+            a(href='/timeline/'+tweet.user.screen_name) @#{tweet.user.screen_name}
+            img(src=tweet.user.profile_image_url)
+            hr
+            p tweet.text
+      else
+        p No tweets match this search
 
-  a(href='/logout') Logout
+  else
+    a(href="/auth/twitter") Login with Twitter
+
+

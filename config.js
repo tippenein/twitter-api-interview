@@ -15,5 +15,5 @@ exports.token_secret = 'jE5u2BdG6tHzPnSAEePiB2XZ0ndIkjkeMkgutRjcxw85C';
 // https://dev.twitter.com/docs/api/1.1/get/search/tweets
 exports.searchResource = 'https://api.twitter.com/1.1/search/tweets.json';
 // https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
-exports.userTimelineResource = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
+exports.timelineResource = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=';
 exports.tokenResource = 'https://twitter.com/oauth/authenticate?oauth_token=';

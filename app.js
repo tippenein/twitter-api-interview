@@ -37,7 +37,7 @@ app.get('/', function(req, res) {
   if (!req.session.oauth) {
     res.render('login', {title: config.title + " : Login"});
   } else {
-    res.redirect('/search');
+    res.render('index', {title: config.title});
   }
 });
 
@@ -56,7 +56,7 @@ app.get('/login', function(req, res) {
 });
 
 // -- callback --
-app.get('/callback', function(req, res) {
+app.get('/auth/twitter/callback', function(req, res) {
   if (!_.isUndefined(req.session.oauth)) {
     req.session.oauth.verifier = req.query.oauth_verifier;
     var oa = req.session.oauth;
@@ -78,24 +78,18 @@ app.get('/callback', function(req, res) {
 // -- search --
 app.get('/search', function(req, res) {
   if (!_.isUndefined(req.session.oauth)) {
-    var oauth = {
-        consumer_key: config.consumer_key,
-        consumer_secret: config.consumer_secret,
-        token: config.access_token,
-        token_secret: config.token_secret
-    };
     var q = req.query.q;
     if (q) {
       var urlCall = config.searchResource + "?q=" + q;
       request.get({
           url: urlCall,
-          oauth: oauth,
+          oauth: makeOAuth(req),
           json: true
       }, function(err, response, body) {
         console.log(body)
         if (err) {console.log("meh:" + err); }
         else {
-          res.render('index', { title:'Searched \"' + q,
+          res.render('index', { title:'Searched \"' + q + "\"",
                                 tweets: body.statuses });
         }
       });
@@ -106,9 +100,36 @@ app.get('/search', function(req, res) {
   }
 });
 
+app.get('/timeline/:user', function(req, res) {
+  var user = req.params.user;
+  var urlCall = config.timelineResource + user;
+  request.get({
+    url: urlCall,
+    oauth: makeOAuth(req),
+    json: true
+  }, function(err, response, body) {
+    if (err) {console.log(err)}
+    else {
+      res.render('index', {title: 'timeline for \"' + user + '\"',
+                           tweets: body,
+                           screen_name: user});
+    }
+  });
+});
+
+function makeOAuth(req) {
+  var oauth = {
+    consumer_key: config.consumer_key,
+    consumer_secret: config.consumer_secret,
+    token: req.session.oauth.access_token,
+    token_secret: req.session.oauth.access_token_secret
+  }
+  return oauth;
+}
+
 
 app.get('/logout', function(req, res) {
-  req.logout();
+  req.session.oauth = undefined;
   res.redirect('/');
 });
 

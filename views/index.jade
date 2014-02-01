@@ -1,27 +1,24 @@
 extends base
 
-block body
+block content
   title= title
   h1= title
-  if user
-    p Hi #{user.displayName}
-    a(href='/logout').btn.btn-primary.pull-right Logout
-    form(name="input", action="/search", method="get")
-      input(type="text", name="q")
-      input.btn(type="submit", value="Submit")
+  a(href='/logout').btn.btn-primary.pull-right Logout
+  form(name="input", action="/search", method="get")
+    input(type="text", name="q")
+    input.btn(type="submit", value="Submit")
 
-    ul.tweets
-      if tweets
-        for tweet in tweets
-          li
-            a(href='/timeline/'+tweet.user.screen_name) @#{tweet.user.screen_name}
+  hr
+
+  ul.tweets
+    if tweets
+      for tweet in tweets
+        li.tweet
+          span
             img(src=tweet.user.profile_image_url)
-            hr
-            p tweet.text
-      else
-        p No tweets match this search
-
-  else
-    a(href="/auth/twitter") Login with Twitter
-
+            a(href='/timeline/'+tweet.user.screen_name) @#{tweet.user.screen_name}
+            br.clear
+            p #{tweet.text}
+    else
+      p No tweets match this search
 

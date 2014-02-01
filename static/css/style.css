@@ -1,0 +1,13 @@
+li {
+  list-style: none;
+}
+
+img {
+  padding-right: 4px;
+}
+.tweet {
+  background-color: #d0d0d0;
+  padding: 6px;
+  margin: 6px;
+  border-radius:4px;
+}

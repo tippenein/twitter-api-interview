@@ -1,6 +1,8 @@
 twitter api interview project
 ===
 
+Hosted on heroku at http://fierce-everglades-3598.herokuapp.com
+
 ##Goals
 
 Build a node.js application that authenticates a twitter user to the twitter
@@ -24,4 +26,6 @@ local with any further special instructions.
 
 notes:
 
+- if using this in a dev environment, set the `CONSUMER_KEY` and `CONSUMER_SECRET` env variables,
+    otherwise use `heroku config:set CONSUMER_KEY=etc..`
 - Node version must be below 0.10.7 because of Jade :(

@@ -1,33 +1,35 @@
-extends base
+doctype html
 
-block head
-  script(src="https://maps.googleapis.com/maps/api/js?sensor=false")
-  //&key=#{key}")
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/static/css/style.css')
+    meta(name="viewport", content="initial-scale=1.0, user-scalable=no")
+    script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
+    script.
 
-block content
-  #map
-  script.
-    function init() {
-      var mapOptions = {
-        zoom: 6,
-        center: new google.maps.LatLng(44.961837, -93.278299),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-      var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-      var bounds = new google.maps.LatLngBounds();
-      var infowindow = new google.maps.InfoWindow();
-      var marker;
-      // yuck jade
-      var locations = !{locations};
-      console.log(locations)
-      if (!_.isEmpty(locations.coordinates)) {
-        _.each(locations.coordinates, function(coordinate) {
+      var map;
+      function initialize() {
+        var mapOptions = {
+          zoom: 6,
+          center: new google.maps.LatLng(44.961837, -93.278299),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        var bounds = new google.maps.LatLngBounds();
+        var infowindow = new google.maps.InfoWindow();
+        var marker;
+        // yuck jade
+        var locations = !{locations};
+        console.log(locations)
+        locations.coordinates.forEach(function(coordinate) {
+          // do markers for each coordinate and message
           console.log(coordinate)
           marker = new google.maps.Marker({
             //backwards coordinates, switch indexes
             position: new google.maps.LatLng(coordinate[1], coordinate[0]),
             map: map,
-            title: 'tweet locations'
+            title: 'tweet location'
           });
 
           // zoom to relevant location
@@ -35,14 +37,15 @@ block content
 
           google.maps.event.addListener(marker, 'click', (function(marker, coordinate) {
             return function() {
-            infowindow.setContent(locations.messages.coordinate);
-            infowindow.open(map, marker);
+              infowindow.setContent(locations.messages[locations.coordinates.indexOf(coordinate)]);
+              infowindow.open(map, marker);
             }
           })(marker, coordinate));
         })
         map.fitBounds(bounds);
       }
-    }
 
-    google.maps.event.addDomListener(window, 'load', init);
+      google.maps.event.addDomListener(window, 'load', initialize);
 
+  body
+    #map-canvas

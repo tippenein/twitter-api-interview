@@ -27,8 +27,8 @@ var callbackURL = config.site + "/auth/twitter/callback";
 var oauth = new OAuth(
     'https://api.twitter.com/oauth/request_token',
     'https://api.twitter.com/oauth/access_token',
-    config.consumer_key,
-    config.consumer_secret,
+    process.env.CONSUMER_KEY,
+    process.env.CONSUMER_SECRET,
     '1.0',
     callbackURL,
     'HMAC-SHA1'
@@ -150,7 +150,6 @@ app.get('/tweetmap/:user', function(req,res) {
         title: 'tweetmap for ' + user,
         tweets: tweets,
         screen_name: user,
-        key: config.mapApiKey,
         locations: JSON.stringify(locations)
       });
     }
@@ -165,8 +164,8 @@ app.get('/logout', function(req, res) {
 function makeOAuth(req) {
   //utility function for making oauth hash
   var oauth = {
-    consumer_key: config.consumer_key,
-    consumer_secret: config.consumer_secret,
+    consumer_key: process.env.CONSUMER_KEY,
+    consumer_secret: process.env.CONSUMER_SECRET,
     token: req.session.oauth.access_token,
     token_secret: req.session.oauth.access_token_secret
   };

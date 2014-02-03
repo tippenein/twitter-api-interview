@@ -1,14 +1,10 @@
-html, body {
-  margin: 0;
-  padding: 0;
+
+html, body, #map-canvas {
   height: 100%;
+  margin: 0px;
+  padding: 0px;
 }
 
-#map {
-  width: 100%;
-  height: 100%;
-  height: 500px;
-}
 li {
   list-style: none;
 }
